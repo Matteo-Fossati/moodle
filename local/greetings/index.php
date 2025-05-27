@@ -23,6 +23,7 @@
  */
 
 require_once('../../config.php');
+require_once($CFG->dirroot.'/local/greetings/lib.php');
 
 $context = context_system::instance();
 $PAGE->set_context($context);
@@ -37,17 +38,12 @@ $PAGE->set_heading(get_string('pluginname', 'local_greetings'));
 
 echo $OUTPUT->header();
 
-if (isloggedin()) {
-    $usergreeting = 'Benvenuto, ' . fullname($USER);
-} else {
-    $usergreeting = 'Benvenuto, visitatore';
-}
+$usergreeting = local_greetings_get_greeting($USER);
 
 
 
 
 $templatedata = ['usergreeting' => $usergreeting];
 echo $OUTPUT->render_from_template('local_greetings/greeting_message', $templatedata);
-echo '<p>Benvenuto nel plugin di esempio <strong>local_greetings</strong>.</p>';
 echo $OUTPUT->footer();
 
