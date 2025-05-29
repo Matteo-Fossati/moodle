@@ -17,17 +17,17 @@
 /**
  * Plugin version and other meta-data are defined here.
  *
- * @package     local_greetings
- * @copyright   2025 Matteo Fossati <matteofossati@socialthingum.com>
- * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   local_greetings
+ * @copyright 2025 Matteo Fossati <matteofossati@socialthingum.com>
+ * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
  /**
   * Returns a personalized greeting for a given user based on their country.
   *
   * @param stdClass $user The Moodle user object (e.g., $USER global)
-  * @return string The personalized greeting message.
+  *
+  * @return string   The personalized greeting message.
   */
 function local_greetings_get_greeting($user) {
     if ($user == null) {
@@ -35,25 +35,38 @@ function local_greetings_get_greeting($user) {
     }
 
     $country = $user->country;
-    switch($country) {
+    switch ($country) {
         case 'AU':
             $langstr = 'greetinguserau';
-            break;
+        break;
         case 'ES':
             $langstr = 'greetinguseres';
-            break;
+        break;
         case 'FJ':
             $langstr = 'greetinguserfj';
-            break;
+        break;
         case 'NZ':
             $langstr = 'greetingusernz';
-            break;
+        break;
         case 'IT':
             $langstr = 'greetinguserit';
-            break;
+        break;
         default:
             $langstr = 'greetingloggedinuser';
     }
 
     return get_string($langstr, 'local_greetings', fullname($user));
+}
+
+/**
+ * Insert a link to index.php on the site front page navigation menu.
+ *
+ * @param navigation_node $frontpage Node representing the front page in the navigation tree.
+ */
+function local_greetings_extend_navigation_frontpage(navigation_node $frontpage) {
+    $frontpage->add(
+        get_string('pluginname', 'local_greetings'),
+        new moodle_url('/local/greetings/index.php'),
+        navigation_node::TYPE_CUSTOM,
+    );
 }

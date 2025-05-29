@@ -17,9 +17,9 @@
 /**
  * Plugin version and other meta-data are defined here.
  *
- * @package     local_greetings
- * @copyright   2025 Matteo Fossati <matteofossati@socialthingum.com>
- * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   local_greetings
+ * @copyright 2025 Matteo Fossati <matteofossati@socialthingum.com>
+ * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once('../../config.php');
@@ -36,6 +36,7 @@ $PAGE->set_title(get_string('pluginname', 'local_greetings'));
 $PAGE->set_heading(get_string('pluginname', 'local_greetings'));
 
 
+$messageform = new \local_greetings\form\message_form();
 echo $OUTPUT->header();
 
 $usergreeting = local_greetings_get_greeting($USER);
@@ -44,6 +45,39 @@ $usergreeting = local_greetings_get_greeting($USER);
 
 
 $templatedata = ['usergreeting' => $usergreeting];
-echo $OUTPUT->render_from_template('local_greetings/greeting_message', $templatedata);
+echo $OUTPUT->render_from_template(
+    'local_greetings/greeting_message',
+    $templatedata
+);
+
+$messageform->display();
+
+$userfields = \core_user\fields::for_name()->with_identity($context);
+$userfieldssql = $userfields->get_sql('u');
+
+$sql = "SELECT m.id, m.message, m.timecreated, m.userid {$userfieldssql->selects}
+          FROM {local_greetings_messages} m
+     LEFT JOIN {user} u ON u.id = m.userid
+      ORDER BY timecreated DESC";
+
+$messages = $DB->get_records_sql($sql);
+
+
+$templatedata = ['messages' => array_values($messages)];
+echo $OUTPUT->render_from_template('local_greetings/messages', $templatedata);
+
+if ($data = $messageform->get_data()) {
+    $message = required_param('message', PARAM_TEXT);
+
+    if (!empty($message)) {
+        $record = new stdClass;
+        $record->message = $message;
+        $record->timecreated = time();
+        $record->userid = $USER->id;
+
+
+        $DB->insert_record('local_greetings_messages', $record);
+    }
+}
 echo $OUTPUT->footer();
 

@@ -17,10 +17,10 @@
 /**
  * Plugin strings are defined here.
  *
- * @package     local_greetings
- * @category    string
- * @copyright   2025 Matteo Fossati <matteofossati@socialthingum.com>
- * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   local_greetings
+ * @category  string
+ * @copyright 2025 Matteo Fossati <matteofossati@socialthingum.com>
+ * @license   https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -33,6 +33,9 @@ $string['greetinguserfj'] = 'Bula, {$a}.';
 $string['greetinguserit'] = 'Ciao, {$a}.';
 $string['greetingusernz'] = 'Kia ora, {$a}.';
 $string['pluginname'] = 'Greetings';
+$string['postedby'] = 'Posted by {$a}.';
+$string['yourmessage'] = 'Your message';
+
 
 
 
