@@ -38,6 +38,7 @@ $string['yourmessage'] = 'Your message';
 $string['greetings:postmessages'] = 'Post a new message on the Greetings wall';
 $string['greetings:viewmessages'] = 'View messages on the Greetings wall';
 $string['greetings:deleteanymessage'] = 'Delete any message on the Greetings wall';
+$string['greetings:deleteownmessage'] = 'Delete own message on the Greetings wall';
 
 
 

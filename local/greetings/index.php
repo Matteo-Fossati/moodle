@@ -42,6 +42,7 @@ if (isguestuser()) {
 
 $allowpost = has_capability('local/greetings:postmessages', $context);// controlla se un utente ha la capability di fare un post e mette il risultato in una var.
 $deleteanypost = has_capability('local/greetings:deleteanymessage', $context);
+$deletepost = has_capability('local/greetings:deleteownmessage', $context);
 $allowview = has_capability('local/greetings:viewmessages', $context);
 
 $messageform = new \local_greetings\form\message_form();
@@ -49,9 +50,18 @@ $messageform = new \local_greetings\form\message_form();
 $action = optional_param('action', '', PARAM_TEXT);
 
 if ($action == 'del') {
+
+    require_sesskey();//metto una protezione contro il CSRF attack
     $id = required_param('id', PARAM_INT);
-    if ($deleteanypost) {
-        $DB->delete_records('local_greetings_messages', ['id' => $id]);
+    if ($deleteanypost || $deletepost) {
+        $params = ['id' => $id];
+
+        //gli utenti senza permessi possono eliminare solo i loro messaggi.
+        if(!$deleteanypost) {
+            $params+=['userid' => $USER->id];
+        }
+        $DB->delete_records('local_greetings_messages', $params);
+        redirect($PAGE->url);
     }
 }
 echo $OUTPUT->header();
@@ -81,9 +91,15 @@ if ($allowview) {
 
 
     $messages = $DB->get_records_sql($sql);
+
+    foreach ($messages as $m) {
+        //l'utente puo eliminare questo post?
+        //attacco il flag del perche non si puo fare nel mustache.
+        $m->candelete = ($deleteanypost || ($deletepost && $m->userid == $USER->id));
+    }
+
     $templatedata = [
         'messages' => array_values($messages),
-        'candeleteany' => $deleteanypost,
     ];
     echo $OUTPUT->render_from_template('local_greetings/messages', $templatedata);
 }
@@ -101,6 +117,8 @@ if ($data = $messageform->get_data()) {
 
 
         $DB->insert_record('local_greetings_messages', $record);
+
+        redirect($PAGE->url);//ricarico la pagina per avere il form vuoto
     }
 }
 echo $OUTPUT->footer();

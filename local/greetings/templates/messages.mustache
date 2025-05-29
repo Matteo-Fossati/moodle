@@ -26,13 +26,13 @@
                     {{#userdate}} {{timecreated}}, {{#str}} strftimedaydatetime, core_langconfig {{/str}} {{/userdate}}
                 </small>
             </p>
-            {{#candeleteany}}
+            {{#candelete}}
                 <p class="card-footer text-center">
-                    <a href="{{config.wwwroot}}/local/greetings/index.php?action=del&id={{id}}">
+                    <a href="{{config.wwwroot}}/local/greetings/index.php?action=del&id={{id}}&sesskey={{config.sesskey}}">
                         {{#pix}} t/delete {{/pix}}{{#str}} delete {{/str}}
                     </a>
                 </p>
-            {{/candeleteany}}
+            {{/candelete}}
         </div>
     </div>
 {{/messages}}
