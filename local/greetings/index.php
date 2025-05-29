@@ -40,7 +40,7 @@ if (isguestuser()) {
     throw new moodle_exception('noguest');
 }
 
-$allowpost = has_capability('local/greetings:postmessages', $context);// controlla se un utente ha la capability di fare un post e mette il risultato in una var.
+$allowpost = has_capability('local/greetings:postmessages', $context);// Controlla se un utente ha la capability di fare un post e mette il risultato in una var.
 $deleteanypost = has_capability('local/greetings:deleteanymessage', $context);
 $deletepost = has_capability('local/greetings:deleteownmessage', $context);
 $allowview = has_capability('local/greetings:viewmessages', $context);
@@ -51,14 +51,14 @@ $action = optional_param('action', '', PARAM_TEXT);
 
 if ($action == 'del') {
 
-    require_sesskey();//metto una protezione contro il CSRF attack
+    require_sesskey();// Metto una protezione contro il CSRF attack.
     $id = required_param('id', PARAM_INT);
     if ($deleteanypost || $deletepost) {
         $params = ['id' => $id];
 
-        //gli utenti senza permessi possono eliminare solo i loro messaggi.
-        if(!$deleteanypost) {
-            $params+=['userid' => $USER->id];
+        // Gli utenti senza permessi possono eliminare solo i loro messaggi.
+        if (!$deleteanypost) {
+            $params += ['userid' => $USER->id];
         }
         $DB->delete_records('local_greetings_messages', $params);
         redirect($PAGE->url);
@@ -93,13 +93,15 @@ if ($allowview) {
     $messages = $DB->get_records_sql($sql);
 
     foreach ($messages as $m) {
-        //l'utente puo eliminare questo post?
-        //attacco il flag del perche non si puo fare nel mustache.
+        // L'utente puo eliminare questo post?
+        // Attacco il flag del perche non si puo fare nel mustache.
         $m->candelete = ($deleteanypost || ($deletepost && $m->userid == $USER->id));
     }
 
+    $cardbackgroundcolor = get_config('local_greetings', 'messagecardbgcolor');
     $templatedata = [
         'messages' => array_values($messages),
+        'cardbackgroundcolor' => $cardbackgroundcolor,
     ];
     echo $OUTPUT->render_from_template('local_greetings/messages', $templatedata);
 }
@@ -118,7 +120,7 @@ if ($data = $messageform->get_data()) {
 
         $DB->insert_record('local_greetings_messages', $record);
 
-        redirect($PAGE->url);//ricarico la pagina per avere il form vuoto
+        redirect($PAGE->url);// Ricarico la pagina per avere il form vuoto.
     }
 }
 echo $OUTPUT->footer();

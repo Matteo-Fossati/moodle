@@ -26,19 +26,22 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['greetingloggedinuser'] = 'Greetings, {$a}.';
+$string['greetings:deleteanymessage'] = 'Delete any message on the Greetings wall';
+$string['greetings:deleteownmessage'] = 'Delete own message on the Greetings wall';
+$string['greetings:postmessages'] = 'Post a new message on the Greetings wall';
+$string['greetings:viewmessages'] = 'View messages on the Greetings wall';
 $string['greetinguser'] = 'Greeting, user.';
 $string['greetinguserau'] = 'Hello, {$a}.';
 $string['greetinguseres'] = 'Hola, {$a}.';
 $string['greetinguserfj'] = 'Bula, {$a}.';
 $string['greetinguserit'] = 'Ciao, {$a}.';
 $string['greetingusernz'] = 'Kia ora, {$a}.';
+$string['messagecardbgcolor'] = 'Message card color';
+$string['messagecardbgcolordesc'] = 'Background color of the message card';
 $string['pluginname'] = 'Greetings';
 $string['postedby'] = 'Posted by {$a}.';
 $string['yourmessage'] = 'Your message';
-$string['greetings:postmessages'] = 'Post a new message on the Greetings wall';
-$string['greetings:viewmessages'] = 'View messages on the Greetings wall';
-$string['greetings:deleteanymessage'] = 'Delete any message on the Greetings wall';
-$string['greetings:deleteownmessage'] = 'Delete own message on the Greetings wall';
+
 
 
 
