@@ -40,7 +40,20 @@ if (isguestuser()) {
     throw new moodle_exception('noguest');
 }
 
+$allowpost = has_capability('local/greetings:postmessages', $context);// controlla se un utente ha la capability di fare un post e mette il risultato in una var.
+$deleteanypost = has_capability('local/greetings:deleteanymessage', $context);
+$allowview = has_capability('local/greetings:viewmessages', $context);
+
 $messageform = new \local_greetings\form\message_form();
+
+$action = optional_param('action', '', PARAM_TEXT);
+
+if ($action == 'del') {
+    $id = required_param('id', PARAM_INT);
+    if ($deleteanypost) {
+        $DB->delete_records('local_greetings_messages', ['id' => $id]);
+    }
+}
 echo $OUTPUT->header();
 
 $usergreeting = local_greetings_get_greeting($USER);
@@ -54,23 +67,30 @@ echo $OUTPUT->render_from_template(
     $templatedata
 );
 
-$messageform->display();
+if ($allowpost) {
+    $messageform->display();
+}
+if ($allowview) {
+    $userfields = \core_user\fields::for_name()->with_identity($context);
+    $userfieldssql = $userfields->get_sql('u');
 
-$userfields = \core_user\fields::for_name()->with_identity($context);
-$userfieldssql = $userfields->get_sql('u');
-
-$sql = "SELECT m.id, m.message, m.timecreated, m.userid {$userfieldssql->selects}
-          FROM {local_greetings_messages} m
-     LEFT JOIN {user} u ON u.id = m.userid
-      ORDER BY timecreated DESC";
-
-$messages = $DB->get_records_sql($sql);
+    $sql = "SELECT m.id, m.message, m.timecreated, m.userid {$userfieldssql->selects}
+            FROM {local_greetings_messages} m
+        LEFT JOIN {user} u ON u.id = m.userid
+        ORDER BY timecreated DESC";
 
 
-$templatedata = ['messages' => array_values($messages)];
-echo $OUTPUT->render_from_template('local_greetings/messages', $templatedata);
+    $messages = $DB->get_records_sql($sql);
+    $templatedata = [
+        'messages' => array_values($messages),
+        'candeleteany' => $deleteanypost,
+    ];
+    echo $OUTPUT->render_from_template('local_greetings/messages', $templatedata);
+}
+
 
 if ($data = $messageform->get_data()) {
+    require_capability('local/greetings:postmessages', $context);
     $message = required_param('message', PARAM_TEXT);
 
     if (!empty($message)) {
